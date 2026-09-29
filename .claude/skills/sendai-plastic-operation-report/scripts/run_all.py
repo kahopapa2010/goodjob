@@ -44,5 +44,7 @@ with tempfile.TemporaryDirectory(dir=a.out) as tmp:
 
 subprocess.run([sys.executable, os.path.join(HERE, "build_analysis.py"), csvd,
                 os.path.join(a.out, "04_操業分析（CSV差し替え式）.xlsx")], check=True)
+from make_zip import make_zip
+print("渡すzip:", make_zip(a.out))
 print("検証: すべて一致" if ok else "検証: 差がある月があります（上のNG行を確認）")
 sys.exit(0 if ok else 1)
