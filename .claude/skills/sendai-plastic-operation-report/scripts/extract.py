@@ -3,13 +3,14 @@
 """
 import sys, os, csv, datetime, warnings, re
 import openpyxl
+from xlsx_load import load
 from openpyxl.utils import get_column_letter as gl, column_index_from_string as ci
 warnings.filterwarnings("ignore")
 
 src, outdir = sys.argv[1], sys.argv[2]
 os.makedirs(outdir, exist_ok=True)
-wf = openpyxl.load_workbook(src)                  # 数式
-wv = openpyxl.load_workbook(src, data_only=True)  # 計算結果
+wf = load(src)                  # 数式
+wv = load(src, data_only=True)  # 計算結果
 
 CONST = re.compile(r"^=[\d.+\-*/() ]+$")   # 例: =18+24（セル内で手計算した入力）
 def isf(ws, a):

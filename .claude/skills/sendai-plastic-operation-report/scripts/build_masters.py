@@ -4,13 +4,14 @@ extract.py を先に実行しておくこと（X_検証_*.csv と T*.csv を使�
 """
 import sys, os, csv, glob, datetime, warnings
 import openpyxl
+from xlsx_load import load
 import pandas as pd
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter as gl
 warnings.filterwarnings("ignore")
 
 src, CSVD = sys.argv[1], sys.argv[2]
-wv = openpyxl.load_workbook(src, data_only=True)
+wv = load(src, data_only=True)
 V = lambda sh, a: wv[sh][a].value
 NIPPO = "日報（認定）"
 days = [V(NIPPO, f"A{50*k+1}") for k in range(31)]
