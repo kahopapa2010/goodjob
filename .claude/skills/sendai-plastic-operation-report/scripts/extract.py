@@ -50,7 +50,23 @@ for k in range(31):
     if isinstance(dt, datetime.datetime): days.append((k, b, dt))
 month = days[0][2].strftime("%Y%m")
 
-tables = {}
+# 0件の月でも見出しだけのCSVを出す（JUST.DB取込・分析Excelで列が必要なため）
+HEADERS = {
+    "T01_日報": ["日付", "今日の安全ポイント", "R-KYK重点行動目標", "汚泥含水率", "脱水汚泥_当日残量kg"],
+    "T02_直別操業": ["日付", "直", "担当班", "所定時間_手入力分", "休憩時間分", "点検清掃定修分", "原水槽", "生物温度",
+                  "放流濁度", "汚泥段数", "汚泥引抜_汚泥貯槽分", "減容品かさ比重", "欠員_プラオペ人数"],
+    "T03_原料処理": ["日付", "直", "搬入元", "処理個数", "処理重量kg"],
+    "T04_入荷明細": ["日付", "搬入元", "車両No", "重量kg", "個数"],
+    "T05_減容品フレコン": ["日付", "直", "No", "重量kg"],
+    "T06_廃棄物発生": ["日付", "直", "品目", "個数", "重量kg_手入力", "発生重量kg"],
+    "T07_出荷明細": ["日付", "品目", "出荷先", "重量kg", "個数", "原料区分", "元データ"],
+    "T08_予定外休止": ["日付", "直", "工程", "休止分"],
+    "T09_設備稼働": ["日付", "時間帯", "設備", "稼働分"],
+    "T10_特記事項": ["日付", "記入欄", "要因", "発生", "終了", "時間分", "内容", "備考"],
+    "T11_ベール処理": ["日付", "順番", "ベール種類", "処理個数", "開始時刻", "終了時刻"],
+    "T12_直送時間別": ["日付", "時間帯", "品目", "重量kg"],
+}
+tables = {t: [] for t in HEADERS}
 def add(t, row): tables.setdefault(t, []).append(row)
 
 SHIFTS = [("D", "I", "J", "Y"), ("N", "M", "N", "AA")]  # 直, 重量列, 個数列, 時間列
@@ -192,7 +208,7 @@ for k, b, dt in days:
     })
 
 for t, rows in tables.items():
-    keys = list(dict.fromkeys(k for r in rows for k in r))
+    keys = list(dict.fromkeys(HEADERS.get(t, []) + [k for r in rows for k in r]))
     with open(os.path.join(outdir, f"{t}_{month}.csv"), "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=keys); w.writeheader()
         for r in rows: w.writerow({k: ("" if r.get(k) is None else r.get(k)) for k in keys})

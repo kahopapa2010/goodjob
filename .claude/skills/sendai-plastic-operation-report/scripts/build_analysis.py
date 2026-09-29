@@ -51,6 +51,8 @@ for t in DATA:
             for row in rd:
                 rec = dict(zip(h, row))
                 ws.append([conv(k, rec.get(k, "")) for k in hdr])
+    if hdr is None:
+        sys.exit(f"{t} のCSVがありません。extract.py で変換し直してください（0件の月も見出しだけのCSVが出ます）")
     for j in range(1, len(hdr) + 1):
         ws.cell(1, j).font = font(bold=True, color="FFFFFF"); ws.cell(1, j).fill = F_HEAD
         ws.column_dimensions[gl(j)].width = 14
